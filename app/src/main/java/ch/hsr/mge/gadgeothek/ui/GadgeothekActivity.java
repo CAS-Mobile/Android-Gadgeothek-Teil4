@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -129,11 +128,5 @@ public class GadgeothekActivity extends AppCompatActivity {
 
     public Toolbar getToolbar() {
         return toolbar;
-    }
-
-    public void onAddReservationButton(View view) {
-        Intent intent = new Intent(this, NewReservationActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right_to_left, R.anim.slide_out_right_to_left);
     }
 }
