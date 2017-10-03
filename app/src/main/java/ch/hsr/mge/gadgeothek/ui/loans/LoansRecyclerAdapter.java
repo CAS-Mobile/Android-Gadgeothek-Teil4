@@ -4,21 +4,26 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.util.List;
 
 import ch.hsr.mge.gadgeothek.R;
 import ch.hsr.mge.gadgeothek.domain.Loan;
+import ch.hsr.mge.gadgeothek.ui.ImageProvider;
 
 public class LoansRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_EMPTY_LIST_PLACEHOLDER = 0;
     private static final int VIEW_TYPE_OBJECT_VIEW = 1;
-
     private final List<Loan> loans;
+    private final DateFormat dateFormat;
 
-    public LoansRecyclerAdapter(List<Loan> loans) {
+    public LoansRecyclerAdapter(List<Loan> loans, DateFormat dateFormat) {
         this.loans = loans;
+        this.dateFormat = dateFormat;
     }
 
     /**
@@ -43,10 +48,11 @@ public class LoansRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             View view = layoutInflater.inflate(R.layout.recycler_empty_item, parent, false);
             return new EmptyRecyclerItemViewHolder(view);
         }
-
-        // TODO create a ViewHolder here
-
-        return null;
+        View layout = layoutInflater.inflate(R.layout.recycler_item, parent, false);
+        TextView nameTextView = (TextView) layout.findViewById(R.id.primaryTextView);
+        TextView returnDateTextView = (TextView) layout.findViewById(R.id.secondaryTextView);
+        ImageView iconImageView = (ImageView) layout.findViewById(R.id.iconImageView);
+        return new RecyclerItemViewHolder(layout, nameTextView, returnDateTextView, iconImageView);
     }
 
     @Override
@@ -57,8 +63,10 @@ public class LoansRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             return;
         }
 
-
-        // TODO bind the ViewHolder here
+        Loan loan = loans.get(position);
+        holder.nameTextView.setText(loan.getGadget().getName());
+        holder.returnDateTextView.setText("Return until " + dateFormat.format(loan.overDueDate()));
+        holder.iconImageView.setImageDrawable(ImageProvider.getIconFor(loan.getGadget()));
     }
 
     public int getItemCount() {
@@ -68,10 +76,15 @@ public class LoansRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public static class RecyclerItemViewHolder extends RecyclerView.ViewHolder {
 
-        // TODO add all missing attributes here
+        public final TextView nameTextView;
+        public final TextView returnDateTextView;
+        public final ImageView iconImageView;
 
-        public RecyclerItemViewHolder(View parent) {
+        public RecyclerItemViewHolder(final View parent, TextView nameTextView, TextView returnDateTextView, ImageView iconImageView) {
             super(parent);
+            this.nameTextView = nameTextView;
+            this.returnDateTextView = returnDateTextView;
+            this.iconImageView = iconImageView;
         }
 
         public boolean isEmptyPlaceholder() {
@@ -82,7 +95,7 @@ public class LoansRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     public static class EmptyRecyclerItemViewHolder extends RecyclerItemViewHolder {
 
         public EmptyRecyclerItemViewHolder(View parent) {
-            super(parent);
+            super(parent, null, null, null);
         }
 
         public boolean isEmptyPlaceholder() {
